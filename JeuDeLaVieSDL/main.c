@@ -25,46 +25,10 @@ int main(int argc, char * argv[]) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(renderer == NULL) exitError("SDL_CreateRenderer");
     /*-------------------------------------------------------*/
+    
     iniTab(tab, rect);
     menu(tab, rect, renderer);
     
-    
-    /*
-    SDL_Rect rect = {100, 100, 10, 10};
-    SDL_Rect menu = {200, 200, 400, 400};
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &menu);
-    SDL_RenderFillRect(renderer, &menu);
-    SDL_RenderPresent(renderer);
-
-    while(program_launched){
-        SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            switch(event.type){
-                case SDL_KEYDOWN:
-                    switch(event.key.keysym.sym){
-                        case SDLK_d:
-                            rect.x += 10;
-                            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                            SDL_RenderClear(renderer);
-                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                            SDL_RenderDrawRect(renderer, &rect);
-                            SDL_RenderFillRect(renderer, &rect);
-                            SDL_RenderPresent(renderer);
-                            continue;
-                        default:
-                            continue;
-                    }
-                case SDL_QUIT:
-                    program_launched = SDL_FALSE;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    */
-
     /*-------------------------------------------------------*/
     if(renderer != NULL) SDL_DestroyRenderer(renderer);
     if(window != NULL) SDL_DestroyWindow(window);

@@ -70,6 +70,14 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
             tab[j*COLONNES + i] = tabtemp[j*COLONNES + i];
         }
     }
+    if(MUTATIONYESNO==1){
+        for(j=0;j<LIGNES;j++){
+            for(i=0;i<COLONNES;i++){
+                if(rand()%1000+1 <= TAUXMUT) tab[j * COLONNES + i] = CELLALIVE;
+                if(rand()%1000+1 <= TAUXAPO) tab[j * COLONNES + i] = CELLDEAD;
+            }
+        }
+    }
     free(tabtemp);
     showGen(tab, rect, renderer);
 }
@@ -98,12 +106,12 @@ void iniTab(char *tab, SDL_Rect *rect){
     }
 }
 
-void modeRandom(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
+void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
     SDL_bool programLaunched = SDL_TRUE;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
-    randomInput(tab, rect, renderer);
+    if(gameMode == 1) randomInput(tab, rect, renderer);
     while(programLaunched){
         SDL_Event event;
         while(SDL_PollEvent(&event)){
@@ -113,7 +121,7 @@ void modeRandom(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                         case SDLK_ESCAPE:
                             programLaunched = SDL_FALSE;
                             break;
-                        case SDLK_g:
+                        case SDLK_SPACE:
                             tabGenPlusOne(tab, rect, renderer);
                             continue;
                         default:
@@ -145,8 +153,10 @@ void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                             programLaunched = SDL_FALSE;
                             break;
                         case SDLK_a:
-                            modeRandom(tab, rect, renderer);
+                            gameLoop(tab, rect, renderer, 1);
                             break;
+                        case SDLK_z:
+                            gameLoop(tab, rect, renderer, 2);
                         default:
                             continue;
                     }

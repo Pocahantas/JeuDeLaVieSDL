@@ -9,15 +9,6 @@ void showTab(char *tab){
         }
         printf("\n");
     }
-    int x = 1, y = 1;
-    if(tab[y * COLONNES + (x + 1 + COLONNES)%COLONNES] == CELLALIVE) printf("droite\n"); //voisin de droite
-    if(tab[y * COLONNES + (x - 1 + COLONNES)%COLONNES] == CELLALIVE) printf("gauche\n"); //voisin de gauche
-    if(tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + x] == CELLALIVE) printf("bas\n"); //voisin du bas
-    if(tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + x] == CELLALIVE) printf("haut\n"); //voisin du haut
-    if(tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] == CELLALIVE) printf("bas droite\n"); //voisin bas droite
-    if(tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] == CELLALIVE) printf("haut droite\n"); //voisin haut droite
-    if(tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] == CELLALIVE) printf("bas gauche\n"); //voisin bas gauche
-    if(tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] == CELLALIVE) printf("haut gauche\n"); //voisin haut gauche
     printf("--------------------------\n");
 }
 
@@ -50,9 +41,9 @@ int nombreVoisins(char *tab, int x, int y){
     return cpt;
 }
 
-void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
+void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
     char *tabtemp;
-    int i, j, n;
+    int i, j, n, a = 0;
     tabtemp = (char*)malloc(sizeof(char)*COLONNES*LIGNES);
     for(j=0;j<LIGNES;j++){
         for(i=0;i<COLONNES;i++){
@@ -70,11 +61,21 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
             tab[j*COLONNES + i] = tabtemp[j*COLONNES + i];
         }
     }
-    if(MUTATIONYESNO==1){
+    if(gameMode==2){
         for(j=0;j<LIGNES;j++){
             for(i=0;i<COLONNES;i++){
-                if(rand()%1000+1 <= TAUXMUT) tab[j * COLONNES + i] = CELLALIVE;
-                if(rand()%1000+1 <= TAUXAPO) tab[j * COLONNES + i] = CELLDEAD;
+                if(rand()%1000+1 <= TAUXMUT){
+                    tab[j * COLONNES + i] = CELLALIVE;
+                    a = 1;
+                }
+                if(rand()%1000+1 <= TAUXAPO){
+                    if(a == 1){
+                        if(rand()%2+1 == 1) tab[j * COLONNES + i] = CELLDEAD;
+                        else tab[j * COLONNES + i] = CELLALIVE;
+                    }
+                    else tab[j * COLONNES + i] = CELLDEAD;
+                }
+                a = 0;
             }
         }
     }
@@ -107,6 +108,7 @@ void iniTab(char *tab, SDL_Rect *rect){
 }
 
 void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
+    int i, cpt = 0;
     SDL_bool programLaunched = SDL_TRUE;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -122,7 +124,11 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
                             programLaunched = SDL_FALSE;
                             break;
                         case SDLK_SPACE:
-                            tabGenPlusOne(tab, rect, renderer);
+                            for(i=0;i<GENMULT;i++){
+                                tabGenPlusOne(tab, rect, renderer, gameMode);
+                            }
+                            cpt++;
+                            printf("Gen = %d\n", cpt*GENMULT);
                             continue;
                         default:
                             continue;

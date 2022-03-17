@@ -25,7 +25,7 @@ int main(int argc, char * argv[]) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(renderer == NULL) exitError("SDL_CreateRenderer");
     /*-------------------------------------------------------*/
-    
+
     iniTab(tab, rect);
     menu(tab, rect, renderer);
     

@@ -11,11 +11,14 @@
 #define CELLALIVE '@'
 #define CELLDEAD ' '
 #define SQUARESIZE 4
-#define TAUXMUT 6
-#define TAUXAPO 5
+#define TAUXMUT 5
+#define TAUXAPO 2
 #define GENMULT 1
+#define RATIONYESNO 1
+#define RECENTDEAD '*'
+#define RECENTDEADYESNO 0
 
-void menu(char *tabtest, SDL_Rect *rect, SDL_Renderer *renderer);
+void menu(char *tabtest, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture * texture);
 void gameLoop(char *tabtest, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode);
 void iniTab(char *tabtest, SDL_Rect *rect);
 void randomInput(char *tabtest, SDL_Rect *rect, SDL_Renderer *renderer);

@@ -17,6 +17,7 @@ int main(int argc, char * argv[]) {
     SDL_Rect *rect = NULL;
     rect = (SDL_Rect*)malloc(sizeof(SDL_Rect)*COLONNES*LIGNES);
     /*-------------------------------------------------------*/
+    
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     if(SDL_Init(SDL_INIT_VIDEO) != 0) exitError("Impossible d'initialiser SDL");
@@ -25,9 +26,21 @@ int main(int argc, char * argv[]) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(renderer == NULL) exitError("SDL_CreateRenderer");
     /*-------------------------------------------------------*/
+    
+    SDL_Surface* surface = NULL;
+    
+    surface = SDL_LoadBMP("/home/nico/CodeInfo/CodeBlocks/JeuDeLaVieSDL/GOL.bmp");
+    if (!surface) {
+    printf("Failed to load image at : %s\n", SDL_GetError());
+}
+   SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+   if (!texture) {
+    printf("Failed to load image at : %s\n", SDL_GetError());    
+}
+    /*-------------------------------------------------------*/
 
     iniTab(tab, rect);
-    menu(tab, rect, renderer);
+    menu(tab, rect, renderer, texture);
     
     /*-------------------------------------------------------*/
     if(renderer != NULL) SDL_DestroyRenderer(renderer);

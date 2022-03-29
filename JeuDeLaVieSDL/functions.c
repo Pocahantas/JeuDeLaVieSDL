@@ -24,6 +24,29 @@ float ratio(char *tab){
     return res;
 }
 
+float ratioColor(char *tab,int *color){
+    int i, j;
+    float cpt = 0;
+    float res;
+    float size = 0;
+    for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            if(tab[i + j*COLONNES] == CELLALIVE) {
+            	size++;
+            	if(color[i+j*COLONNES]==1){
+            	cpt++;
+            	} 
+            }
+            
+        }
+    }
+    
+    res = cpt / size;
+    return res;
+}
+
+
+
 void showGen(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int *colors){
     int i, j;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -106,7 +129,18 @@ void iniColors(char *tab, int *colors){
 	}
 	
 	}
-	
+	if(MODE==2){
+	for(j=0; j<LIGNES;++j){
+		for(i=0; i<COLONNES;++i){
+			if(tab[i+j*COLONNES]==CELLALIVE){
+			if((i%2) ==0) {
+			colors[i + j * COLONNES] = 2;
+			}
+            		else colors[i + j * COLONNES] = 1;	
+			}
+		}
+	}
+	}
 
 }
 /*-------------------------------------------------------*/
@@ -139,17 +173,56 @@ int nombreVoisins(char *tab, int x, int y){
     return cpt;
 }
 
+/*-------------------------------------------------------*/
+//Fait apparaitre un glider
+void glider(char *tab, int x, int y){
+    int i, j;
+    
+    
+    
+	if(rand()%GLIDERDIRECTION==0 && GLIDERDIRECTION < 10001) {
+    tab[y * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLALIVE ; //voisin de droite
+    tab[y * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLDEAD; //voisin de gauche
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + x] = CELLALIVE ; //voisin du bas
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + x] = CELLALIVE; //voisin du haut
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLALIVE; //voisin bas droite
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLDEAD; //voisin haut droite
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLALIVE; //voisin bas gauche
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLDEAD; //haut gauche
+    tab[y*COLONNES + x] = CELLDEAD;
+    
+	}
+	else {
+	tab[y * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLDEAD ; //voisin de droite
+    tab[y * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLALIVE; //voisin de gauche
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + x] = CELLALIVE ; //voisin du bas
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + x] = CELLALIVE; //voisin du haut
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLDEAD; //voisin bas droite
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x + 1 + COLONNES)%COLONNES] = CELLALIVE; //voisin haut droite
+    tab[((y + 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLDEAD; //voisin bas gauche
+    tab[((y - 1 + LIGNES)%LIGNES) * COLONNES + (x - 1 + COLONNES)%COLONNES] = CELLALIVE; //haut gauche
+    tab[y*COLONNES + x] = CELLDEAD;
+	
+	
+	
+	}
+
+
+}
+/*-------------------------------------------------------*/
+
+
 void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode, int *colors){
     char *tabtemp;
-    
     int i, j, n, a = 0;
     tabtemp = (char*)malloc(sizeof(char)*COLONNES*LIGNES);
     int *colorstemp;
     colorstemp = calloc(COLONNES*LIGNES,sizeof(int));
+    if(TEAMS==1){
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
             n = nombreVoisins(tab, i, j);
-            if(n==3) {
+            if(n==BIRTH) {
             tabtemp[i + j * COLONNES] = CELLALIVE;
             if (rand()%3+1 <= nombreColors(colors, i ,j)){
             	colorstemp[i + j*COLONNES] = 1;
@@ -159,7 +232,7 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
             }
             }
             
-            else if(n==2) {
+            else if(n==STABLE) {
             tabtemp[i + j * COLONNES] = tab[i + j * COLONNES];
             colorstemp[i+j*COLONNES] = colors[i+j*COLONNES];
             }
@@ -180,6 +253,38 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
         for(i=0;i<COLONNES;++i){
             colors[i + j * COLONNES] = colorstemp[i + j * COLONNES];
         }
+    }
+    }
+    else{
+    for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            n = nombreVoisins(tab, i, j);
+            if(n==BIRTH) {
+            tabtemp[i + j * COLONNES] = CELLALIVE;
+            
+            }
+            
+            
+            
+            else if(n==STABLE) {
+            tabtemp[i + j * COLONNES] = tab[i + j * COLONNES];
+            
+            }
+            
+            else {
+            	
+                if(RECENTDEADYESNO == 1 && tab[i + j * COLONNES] == CELLALIVE) tabtemp[i + j * COLONNES] = RECENTDEAD;
+                else tabtemp[i + j * COLONNES] = CELLDEAD;
+            }
+        }
+    }
+    for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            tab[i + j * COLONNES] = tabtemp[i + j * COLONNES];
+        }
+    }
+    
+    
     }
     if(gameMode==2){
         for(j=0;j<LIGNES;++j){
@@ -219,16 +324,50 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
     }
     free(tabtemp);
     free(colorstemp);
+    
     showGen(tab, rect, renderer, colors);
 }
 
 void randomInput(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int *colors){
     int i, j;
+    if(GLIDERS==0){
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
             if(rand()%2+1 == 1) tab[i + j * COLONNES] = CELLDEAD;
             else tab[i + j * COLONNES] = CELLALIVE;
         }
+    }
+    }
+    if (GLIDERS==1){
+    	for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            tab[i + j * COLONNES] = CELLDEAD;
+            
+        }
+    }
+    if (COLLISION==0){
+    for(j=3;j<LIGNES-3;++j){
+        for(i=3;i<COLONNES-3;++i){
+            if(rand()%GLIDERSPAWN== 1 && nombreVoisins(tab, i+2, j)==0 && nombreVoisins(tab, i+2, j+2)==0 && nombreVoisins(tab, i+2, j-2)==0 && nombreVoisins(tab, i, j+2)==0 && nombreVoisins(tab, i-2, j+2)==0 && nombreVoisins(tab, i-2, j)==0 && nombreVoisins(tab, i-2, j-2)==0 && nombreVoisins(tab, i, j-2)==0 && nombreVoisins(tab, i, j)==0) {
+            glider(tab, i, j);
+            
+            }
+            
+        }
+    }
+    }
+    if (COLLISION ==1){
+    for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            if(rand()%GLIDERSPAWN==1 ) {
+            glider(tab, i, j);
+            
+            }
+            
+        }
+    }
+    
+    }
     }
     showGen(tab, rect, renderer, colors);
 }
@@ -466,7 +605,11 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode, i
                                 tabGenPlusOne(tab, rect, renderer, gameMode, colors);
                             }
                             cpt++;
-                            printf("Gen = %d, Ratio = %f\n", cpt*GENMULT, ratio(tab));
+                            printf("\nGen = %d,\nRatio Vivants/Morts = %f\n", cpt*GENMULT, ratio(tab));
+                            if(TEAMS==1){
+                            	printf("Ratio Bleu/Bleu+Rouge = %f \n", ratioColor(tab, colors));
+                            
+                            }
                             continue;
                         default:
                             continue;

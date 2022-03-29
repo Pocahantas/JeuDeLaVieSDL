@@ -25,6 +25,13 @@
 #define TEAMS 1
 #define MODE 1
 
+#define BIRTH 3
+#define STABLE 2
+#define GLIDERS 1
+#define GLIDERSPAWN 100
+#define GLIDERDIRECTION 10
+#define COLLISION 0
+
 
 void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture, int *colors);
 void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode, int *colors);
@@ -43,6 +50,8 @@ int find3LineVert(char *tab, int x, int y);
 int find3LineHori(char *tab, int x, int y);
 void iniColors(char *tab, int *colors);
 int nombreColors(int *colors, int x, int y);
+float ratioColor(char *tab,int *color);
+
 
 
 #endif
